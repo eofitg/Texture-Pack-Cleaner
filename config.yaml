@@ -1,0 +1,35 @@
+# built-in paths (Don't change these unless you know what are you doing)
+path:
+  input_path: './input/'
+  output_path: './output/'
+  test_path: './test/'
+  original_path: './original/'
+
+# texture pack version (Only 1.8.9)
+version: '1.8.9'
+
+
+# special filter rules
+# priority: keep_info > keep_hidden > blacklist > whitelist
+
+# if or not to keep pack author's credits or signs or something like these
+# = files are siblings with './assets' folder but not necessary
+keep_info: False
+# if or not to keep files or folders starting with '.'
+keep_hidden: False
+
+blacklist:
+  # windows
+  - 'Thumbs.db'
+  - 'Desktop.ini'
+
+whitelist:
+  # pack info
+  - 'pack.png'
+  - 'pack.mcmeta'
+  # optifine
+  - 'assets/minecraft/mcpatcher'
+  - 'assets/minecraft/optifine'
+  # game sounds (which are not in the default game resource path)
+  - 'assets/minecraft/sounds'
+
