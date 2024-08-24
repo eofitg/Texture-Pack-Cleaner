@@ -5,7 +5,8 @@ from utils import config_reader as cr
 from utils import operating_tools as ot
 from utils import zip_tools as zt
 
-building_message = True
+necessary_message = True
+building_message = False
 
 keep_info = cr.get('keep_info')  # boolean
 keep_hidden = cr.get('keep_hidden')  # boolean
@@ -196,7 +197,7 @@ def main():
 
     # clear output folder
     ot.clear()
-    if building_message:
+    if building_message or necessary_message:
         print("Cleared output folder.")
 
     packs = ot.get_packs()
@@ -204,7 +205,7 @@ def main():
         # ./input/{pack}
         pack_path = ot.get_pack_path(pack)
         pack_path_backup = pack_path
-        if building_message:
+        if building_message or necessary_message:
             print("Building \"" + pack_path + "\" ......")
 
         # this pack may be nested like
@@ -215,7 +216,7 @@ def main():
             for item in os.scandir(pack_path):
                 if item.is_dir():
                     pack_path = item.path
-                    if building_message:
+                    if building_message or necessary_message:
                         print("Building \"" + pack_path + "\" ......")
                     break
 
@@ -248,16 +249,16 @@ def main():
 
         # ./input/{pack}/assets
         build(os.path.join(pack_path, 'assets'), False)
-        if building_message:
+        if building_message or necessary_message:
             print("Building \"" + os.path.join(pack_path, 'assets') + "\" ......")
 
         zt.compress(ot.get_output_path(pack_path))
-        if building_message:
+        if building_message or necessary_message:
             print("Compressed output files.")
 
         ot.del_dir(ot.get_output_path(pack_path))
         ot.del_dir(pack_path_backup)
-        if building_message:
+        if building_message or necessary_message:
             print("Cleared extra files.")
 
 
