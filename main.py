@@ -13,6 +13,15 @@ whitelist = cr.get('whitelist')  # string list
 blacklist = cr.get('blacklist')  # string list
 
 
+def only1dir(path):
+    for item in os.scandir(path):
+        if item.is_file():
+            if not item.name.startswith('.'):
+                return False
+
+    return True
+
+
 def build(path, keep):
     # keep: if or not to force to keep file in this path, False means not
     # = True means some level of parent dir is in whitelist
@@ -202,13 +211,18 @@ def main():
         # ./input/XXX/{pack}
         # for this, recognize dirs with only 1 internal dir as a layer of nesting
         # (Not the best way, I know. BUT I AM TOO LAZY TO FIND A BETTER METHOD :///)
-        if len([item for item in os.listdir(pack_path) if os.path.isdir(os.path.join(pack_path, item))]) == 1:
+        if only1dir(pack_path):
             for item in os.scandir(pack_path):
                 if item.is_dir():
                     pack_path = item.path
+                    if building_message:
+                        print("Building \"" + pack_path + "\" ......")
                     break
 
         for item in os.scandir(pack_path):
+
+            if item.is_dir() and item.name == "assets":
+                continue
 
             # check hidden items
             if item.name.startswith('.') and keep_hidden:
@@ -220,6 +234,7 @@ def main():
 
             # check whitelist
             relative_path = ot.get_relative_path(item.path)
+            # print("RELA: " + relative_path)
             if relative_path in whitelist or keep_info:
                 ot.build(item.path)
                 if building_message:
@@ -233,6 +248,8 @@ def main():
 
         # ./input/{pack}/assets
         build(os.path.join(pack_path, 'assets'), False)
+        if building_message:
+            print("Building \"" + os.path.join(pack_path, 'assets') + "\" ......")
 
         zt.compress(ot.get_output_path(pack_path))
         if building_message:

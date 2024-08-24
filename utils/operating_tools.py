@@ -65,7 +65,7 @@ def get_relative_path(path):
     parts = path.split(os.sep)
     _from = 0
     for i in range(0, len(parts)):
-        if parts[i] == 'assets':
+        if parts[i] == 'assets' or parts[i].startswith("pack."):
             _from = i
             break
     rela = parts[_from]

@@ -7,6 +7,7 @@ Remove files that are the same as **original** or **meaningless** in a custom te
 - [ ] `asset/minecraft/sounds`
 - [ ] More versions (not just 1.8.9)
 - [ ] Special files support (not dir and not common file)
+- [ ] Custom font support
 
 ### Usage
 - Put your texture packs in `./input/` folder, can be folders or `.zip` files
