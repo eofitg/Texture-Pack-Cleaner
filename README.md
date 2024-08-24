@@ -2,6 +2,12 @@
 Remove files that are the same as **original** or **meaningless** in a custom texture pack.
 
 ---
+### Size Comparison
+- **Before**
+![before](./img/before.png)
+- **After**
+![after](./img/after.png)
+---
 
 ### TO-DO
 - [ ] `asset/minecraft/sounds`

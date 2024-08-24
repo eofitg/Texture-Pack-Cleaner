@@ -22,6 +22,8 @@ blacklist:
   # windows
   - 'Thumbs.db'
   - 'Desktop.ini'
+  # macOS
+  - '.DS_Store'
 
 whitelist:
   # pack info
