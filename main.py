@@ -23,10 +23,10 @@ def build(path, keep):
         if keep_hidden:
             ot.build(path)
             if building_message:
-                print("    Retained as keep_hidden=" + keep_hidden)
+                print("    Retained as keep_hidden=" + str(keep_hidden))
         else:
             if building_message:
-                print("    Cleared as keep_hidden=" + keep_hidden)
+                print("    Cleared as keep_hidden=" + str(keep_hidden))
         return
 
     # priority: blacklist > whitelist
@@ -202,7 +202,7 @@ def main():
             if item.name.startswith('.') and keep_hidden:
                 ot.build(item.path)
                 if building_message:
-                    print("  Found hidden item in \"" + item.path + "\"")
+                    print("  Found hidden item at \"" + item.path + "\"")
                     print("    Retained.")
                 continue
 
@@ -211,8 +211,13 @@ def main():
             if relative_path in whitelist or keep_info:
                 ot.build(item.path)
                 if building_message:
-                    print("  Found item need to keep in \"" + item.path + "\"")
+                    print("  Found item need to keep at \"" + item.path + "\"")
                     print("    Retained.")
+                continue
+
+            if building_message:
+                print("  Found meaningless item at \"" + item.path + "\"")
+                print("    Cleared.")
 
         # ./input/{pack}/assets
         build(os.path.join(pack_path, 'assets'), False)
