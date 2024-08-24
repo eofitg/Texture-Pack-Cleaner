@@ -20,7 +20,4 @@ Remove files that are the same as **original** or **meaningless** in a custom te
 ### Known Bugs 
 - `main.py`: `build()` _line 82_
   - Static images with `.mcmeta` files will be also recognized as dynamic images
-- `operating_tools.py` `zip_tools.py`
-  - Files named with special symbols can not be read correctly. _Which means only empty `.zip` files can be generated for them._
-
 ---
