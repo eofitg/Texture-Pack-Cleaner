@@ -194,8 +194,19 @@ def main():
     for pack in packs:
         # ./input/{pack}
         pack_path = ot.get_pack_path(pack)
+        pack_path_backup = pack_path
         if building_message:
             print("Building \"" + pack_path + "\" ......")
+
+        # this pack may be nested like
+        # ./input/XXX/{pack}
+        # for this, recognize dirs with only 1 internal dir as a layer of nesting
+        # (Not the best way, I know. BUT I AM TOO LAZY TO FIND A BETTER METHOD :///)
+        if len([item for item in os.listdir(pack_path) if os.path.isdir(os.path.join(pack_path, item))]) == 1:
+            for item in os.scandir(pack_path):
+                if item.is_dir():
+                    pack_path = item.path
+                    break
 
         for item in os.scandir(pack_path):
 
@@ -228,7 +239,7 @@ def main():
             print("Compressed output files.")
 
         ot.del_dir(ot.get_output_path(pack_path))
-        ot.del_dir(pack_path)
+        ot.del_dir(pack_path_backup)
         if building_message:
             print("Cleared extra files.")
 

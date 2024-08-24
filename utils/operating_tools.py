@@ -63,8 +63,13 @@ def get_output_path(path):
 # Turn root path into the certain relative path in a pack (for whitelist check)
 def get_relative_path(path):
     parts = path.split(os.sep)
-    rela = parts[3]
-    for i in range(4, len(parts)):
+    _from = 0
+    for i in range(0, len(parts)):
+        if parts[i] == 'assets':
+            _from = i
+            break
+    rela = parts[_from]
+    for i in range(_from + 1, len(parts)):
         rela = os.path.join(rela, parts[i])
     return rela
 
