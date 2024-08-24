@@ -15,25 +15,49 @@ blacklist = cr.get('blacklist')  # string list
 def build(path, keep):
     # keep: if or not to force to keep file in this path, False means not
     # = True means some level of parent dir is in whitelist
+
     name = os.path.basename(path)  # with ext
     if name.startswith('.'):
+        if building_message:
+            print("  Found hidden item at \"" + path + "\"")
         if keep_hidden:
             ot.build(path)
+            if building_message:
+                print("    Retained as keep_hidden=" + keep_hidden)
+        else:
+            if building_message:
+                print("    Cleared as keep_hidden=" + keep_hidden)
         return
+
     # priority: blacklist > whitelist
     if name in blacklist:
+        if building_message:
+            print("  Found blacklist item at \"" + path + "\"")
+            print("    Cleared.")
         return
 
     relative_path = ot.get_relative_path(path)
     original_path = ot.get_original_path(path)
+
     if relative_path in whitelist and not keep:
         keep = True
-    if not os.path.exists(original_path) and not keep:
-        return
+
+    # file or dir but no source can correspond
+    if not os.path.exists(original_path):
+        if building_message:
+            print("  Found extra item at \"" + path + "\"")
+        if not keep:
+            if building_message:
+                print("    Cleared.")
+            return
 
     if os.path.isfile(path):
+        # whitelist file
         if keep:
             ot.build(path)
+            if building_message:
+                print("  Found whitelist file at \"" + path + "\"")
+                print("    Retained.")
         else:
             # match file if or not the same as original
             # same -> meaningless -> ignore
@@ -45,47 +69,63 @@ def build(path, keep):
                 # diff json
                 if not ct.comp_json(path, original_path):
                     ot.build(path)
+                    if building_message:
+                        print("  Found meaning json at \"" + path + "\"")
+                        print("    Retained.")
                 # same json
                 else:
+                    if building_message:
+                        print("  Found meaningless json at \"" + path + "\"")
                     # if or not that this file is bind with a png
                     png_path = path[:-len(ext)]
                     # not exist = meaningless or just normal json
                     if os.path.exists(png_path):
                         ori_path = ot.get_original_path(png_path)
                         if os.path.exists(ori_path):
+                            # Because .png needs .mcmeta to load rightly
+                            # As long as a changed .png file exists,
+                            # .mcmeta file has to be retained though it is unchanged
                             if not ct.comp_img(png_path, ori_path):
                                 ot.build(path)
                                 if building_message:
-                                    print("  DIFF-PNG:" + png_path + " WITH")
+                                    print("  - with meaning pic at \"" + png_path + "\"")
+                                    print("    Retained.")
                             else:
                                 if building_message:
-                                    print("  SAME-PNG:" + png_path + " WITH")
+                                    print("  - with meaningless pic at \"" + png_path + "\"")
+                                    print("    Cleared.")
                         else:
                             # not exist = may be meaningless png
                             # this file haven't been checked for whitelist by 'keep' so need a re-check
+                            # json file also need to retain when its png is in the whitelist
                             rela_path = ot.get_relative_path(png_path)
                             if rela_path in whitelist:
                                 ot.build(path)
                                 if building_message:
-                                    print("  WL-PNG:" + png_path + " THO")
-                    if building_message:
-                        print("  SAME-JSON:" + path)
+                                    print("  - with whitelist pic at \"" + png_path + "\"")
+                                    print("    Retained.")
 
             # PNG
             elif ext == '.png':
                 # diff png
                 if not ct.comp_img(path, original_path):
                     ot.build(path)
+                    if building_message:
+                        print("  Found meaning pic at \"" + path + "\"")
+                        print("    Retained.")
+
                     # if changed static png to dynamic
                     json_path = path + '.mcmeta'
                     if os.path.exists(json_path):
                         # Known Bug: static png but with mcmeta with be identified as dynamic
                         ot.build(json_path)
                         if building_message:
-                            print("  DYNAMIZED-STATIC-PNG:" + path + " CONFIG IN")
-                            print("  " + json_path)
+                            print("  - with its custom json to dynamize at \"" + json_path + "\"")
+                            print("    Retained.")
                 # same png
                 else:
+                    if building_message:
+                        print("  Found meaningless pic at \"" + path + "\"")
                     # if or not that this file is bind with a json
                     json_path = path + '.mcmeta'
                     # not exist = meaningless or just normal png
@@ -95,10 +135,12 @@ def build(path, keep):
                             if not ct.comp_json(json_path, ori_path):
                                 ot.build(path)
                                 if building_message:
-                                    print("  DIFF-JSON:" + json_path + " WITH")
+                                    print("  - with meaning json at \"" + json_path + "\"")
+                                    print("    Retained.")
                             else:
                                 if building_message:
-                                    print("  SAME-JSON" + json_path + " WITH")
+                                    print("  - with meaningless json at \"" + json_path + "\"")
+                                    print("    Cleared.")
                         else:
                             # not exist = may be meaningless json
                             # this file haven't been checked for whitelist by 'keep' so need a re-check
@@ -106,24 +148,36 @@ def build(path, keep):
                             if rela_path in whitelist:
                                 ot.build(path)
                                 if building_message:
-                                    print("  WL-JSON:" + json_path + " THO")
-                    if building_message:
-                        print("  SAME-PNG:" + path)
+                                    print("  - with whitelist json at \"" + json_path + "\"")
+                                    print("    Retained.")
 
-            # else files
+            # ELSE files
             else:
                 if not ct.comp_txt(path, original_path):
                     ot.build(path)
+                    if building_message:
+                        print("  Found meaning txt at \"" + path + "\"")
+                        print("    Retained.")
                 else:
                     if building_message:
-                        print("  SAME-TXT:" + path)
+                        print("  Found meaningless txt at \"" + path + "\"")
+                        print("    Cleared.")
 
     elif os.path.isdir(path):
         if len(os.listdir(path)) == 0:  # dir is empty
             if keep:
                 ot.build(path)
+                if building_message:
+                    print("  Found empty whitelist dir at \"" + path + "\"")
+                    print("    Retained.")
+            else:
+                if building_message:
+                    print("  Found empty dir at \"" + path + "\"")
+                    print("    Cleared.")
             return
 
+        if building_message:
+            print("  Scanning dir at \"" + path + "\"")
         for item in os.scandir(path):
             build(item.path, keep)
 
@@ -132,32 +186,45 @@ def main():
 
     # clear output folder
     ot.clear()
+    if building_message:
+        print("Cleared output folder.")
 
     packs = ot.get_packs()
     for pack in packs:
         # ./input/{pack}
         pack_path = ot.get_pack_path(pack)
         if building_message:
-            print('Building ' + pack_path + ' ......')
+            print("Building \"" + pack_path + "\" ......")
 
         for item in os.scandir(pack_path):
-            # print('FILE_PATH:' + file.path)
+
             # check hidden items
             if item.name.startswith('.') and keep_hidden:
                 ot.build(item.path)
+                if building_message:
+                    print("  Found hidden item in \"" + item.path + "\"")
+                    print("    Retained.")
                 continue
 
             # check whitelist
             relative_path = ot.get_relative_path(item.path)
             if relative_path in whitelist or keep_info:
                 ot.build(item.path)
+                if building_message:
+                    print("  Found item need to keep in \"" + item.path + "\"")
+                    print("    Retained.")
 
         # ./input/{pack}/assets
         build(os.path.join(pack_path, 'assets'), False)
 
         zt.compress(ot.get_output_path(pack_path))
+        if building_message:
+            print("Compressed output files.")
+
         ot.del_dir(ot.get_output_path(pack_path))
         ot.del_dir(pack_path)
+        if building_message:
+            print("Cleared extra files.")
 
 
 if __name__ == '__main__':
