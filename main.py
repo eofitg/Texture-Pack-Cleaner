@@ -15,12 +15,23 @@ blacklist = cr.get('blacklist')  # string list
 
 
 def only1dir(path):
+    count = False
+    res_path = ""
     for item in os.scandir(path):
+        if item.name.startswith('.'):
+            continue
+        # should not have any files
         if item.is_file():
-            if not item.name.startswith('.'):
-                return False
+            return ""
+        else:
+            if not count:
+                count = True
+                res_path = item.path
+            # found another dir while has counted one
+            else:
+                return ""
 
-    return True
+    return res_path
 
 
 def build(path, keep):
@@ -212,13 +223,10 @@ def main():
         # ./input/XXX/{pack}
         # for this, recognize dirs with only 1 internal dir as a layer of nesting
         # (Not the best way, I know. BUT I AM TOO LAZY TO FIND A BETTER METHOD :///)
-        if only1dir(pack_path):
-            for item in os.scandir(pack_path):
-                if item.is_dir():
-                    pack_path = item.path
-                    if building_message or necessary_message:
-                        print("Building \"" + pack_path + "\" ......")
-                    break
+        if only1dir(pack_path) != "":
+            pack_path = only1dir(pack_path)
+            if building_message or necessary_message:
+                print("Building nested dir \"" + pack_path + "\" ......")
 
         for item in os.scandir(pack_path):
 
