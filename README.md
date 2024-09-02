@@ -28,3 +28,7 @@ Remove files that are the same as **original** or **meaningless** in a custom te
 - `main.py`: `build()` _line 82_
   - Static images with `.mcmeta` files will be also recognized as dynamic images
 ---
+### Fun Facts
+- POV: You disabled all the OptiFine features:
+![optifineless](./img/optifineless.png)
+  Every pack is getting so small and clean lol
