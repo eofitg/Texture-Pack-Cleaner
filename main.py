@@ -10,8 +10,8 @@ building_message = False
 
 keep_info = cr.get('keep_info')  # boolean
 keep_hidden = cr.get('keep_hidden')  # boolean
-whitelist = cr.get('whitelist')  # string list
-blacklist = cr.get('blacklist')  # string list
+whitelist = cr.get_path_list('whitelist')  # string list
+blacklist = cr.get_path_list('blacklist')  # string list
 
 
 def only1dir(path):

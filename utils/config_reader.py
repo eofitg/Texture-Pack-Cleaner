@@ -11,3 +11,14 @@ def get(key_list):
     for key in keys:
         value = value[key]
     return value
+
+
+def get_path_list(key_list):
+    value = list(get(key_list))
+    for s in value:
+        if s.replace('/', '\\') == s:
+            continue
+
+        value.append(str(s).replace('/', '\\'))
+
+    return value
