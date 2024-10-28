@@ -14,23 +14,32 @@ whitelist = cr.get_path_list('whitelist')  # string list
 blacklist = cr.get_path_list('blacklist')  # string list
 
 
+# this path only has one dir
 def only1dir(path):
     count = False
     res_path = ""
+
     for item in os.scandir(path):
+
+        # ignore hidden items
         if item.name.startswith('.'):
             continue
+
         # should not have any files
         if item.is_file():
             return ""
+
+        # found dir
         else:
             if not count:
                 count = True
                 res_path = item.path
+
             # found another dir while has counted one
             else:
                 return ""
 
+    # return the only directory's path
     return res_path
 
 
@@ -39,6 +48,8 @@ def build(path, keep):
     # = True means some level of parent dir is in whitelist
 
     name = os.path.basename(path)  # with ext
+
+    # hidden items check
     if name.startswith('.'):
         if building_message:
             print("  Found hidden item at \"" + path + "\"")
@@ -61,6 +72,7 @@ def build(path, keep):
     relative_path = ot.get_relative_path(path)
     original_path = ot.get_original_path(path)
 
+    # whitelist check
     if relative_path in whitelist and not keep:
         keep = True
 
@@ -73,19 +85,24 @@ def build(path, keep):
                 print("    Cleared.")
             return
 
+    # check files
     if os.path.isfile(path):
+
         # whitelist file
         if keep:
             ot.build(path)
             if building_message:
                 print("  Found whitelist file at \"" + path + "\"")
                 print("    Retained.")
+
+        # not in whitelist
         else:
             # match file if or not the same as original
             # same -> meaningless -> ignore
             # different -> build
             file = os.path.basename(path)
             _, ext = os.path.splitext(file)
+
             # JSON or MCMETA
             if ext == '.json' or ext == '.mcmeta':
                 # diff json
@@ -173,7 +190,7 @@ def build(path, keep):
                                     print("  - with whitelist json at \"" + json_path + "\"")
                                     print("    Retained.")
 
-            # ELSE files
+            # other files
             else:
                 if not ct.comp_txt(path, original_path):
                     ot.build(path)
@@ -185,21 +202,31 @@ def build(path, keep):
                         print("  Found meaningless txt at \"" + path + "\"")
                         print("    Cleared.")
 
+    # check dirs
     elif os.path.isdir(path):
-        if len(os.listdir(path)) == 0:  # dir is empty
+
+        # dir is empty
+        if len(os.listdir(path)) == 0:
+
+            # whitelist dir
             if keep:
                 ot.build(path)
                 if building_message:
                     print("  Found empty whitelist dir at \"" + path + "\"")
                     print("    Retained.")
+
+            # not in whitelist
             else:
                 if building_message:
                     print("  Found empty dir at \"" + path + "\"")
                     print("    Cleared.")
+
             return
 
+        # dir is not empty
         if building_message:
             print("  Scanning dir at \"" + path + "\"")
+
         for item in os.scandir(path):
             build(item.path, keep)
 
@@ -230,6 +257,7 @@ def main():
 
         for item in os.scandir(pack_path):
 
+            # assets dir has to be kept
             if item.is_dir() and item.name == "assets":
                 continue
 
@@ -241,7 +269,7 @@ def main():
                     print("    Retained.")
                 continue
 
-            # check whitelist
+            # check whitelist & keep info or not
             relative_path = ot.get_relative_path(item.path)
             # print("RELA: " + relative_path)
             if relative_path in whitelist or keep_info:
@@ -260,10 +288,12 @@ def main():
         if building_message or necessary_message:
             print("Building \"" + os.path.join(pack_path, 'assets') + "\" ......")
 
+        # Compress output
         zt.compress(ot.get_output_path(pack_path))
         if building_message or necessary_message:
             print("Compressed output files.")
 
+        # Delete previously decompressed dirs in the "input" folder
         ot.del_dir(ot.get_output_path(pack_path))
         ot.del_dir(pack_path_backup)
         if building_message or necessary_message:
