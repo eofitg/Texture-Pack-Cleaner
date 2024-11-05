@@ -236,7 +236,7 @@ def build(path, keep):
 def main():
 
     # clear output folder
-    ot.clear()
+    ot.clear_output()
     if building_message or necessary_message:
         print("Cleared output folder.")
 

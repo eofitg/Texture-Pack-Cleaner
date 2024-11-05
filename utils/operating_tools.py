@@ -9,7 +9,7 @@ original_path = cr.get('path.original_path')
 version = cr.get('version')
 
 
-def clear():
+def clear_output():
     if not os.path.exists(output_path):
         os.makedirs(output_path)
         return
