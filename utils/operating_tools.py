@@ -18,6 +18,11 @@ def clear():
         os.makedirs(output_path)
 
 
+def del_dir(dst):
+    if os.path.exists(dst):
+        shutil.rmtree(dst)
+
+
 # dst: parent folder path
 def copy_file(src, dst):
     if not os.path.exists(dst):
@@ -48,11 +53,6 @@ def copy(src, dst):
 # Add this file / dir from 'input' to 'output'
 def build(src):
     copy(src, get_output_path(src))
-
-
-def del_dir(dst):
-    if os.path.exists(dst):
-        shutil.rmtree(dst)
 
 
 # Turn input_path into output_path (No '/' at the end of path)
