@@ -39,15 +39,10 @@ def copy_dir(src, dst):
 
 # Copy this file / dir to dst path
 def copy(src, dst):
-    s = str(src)
-    if s.endswith(os.sep):
-        s = src[:-1]
-
-    name = os.path.basename(s)
-    if os.path.isdir(s):  # folder
+    if os.path.isdir(src):  # folder
         copy_dir(src, dst)
-    elif os.path.isfile(s):  # file
-        copy_file(src, dst[:-len(name)])
+    elif os.path.isfile(src):  # file
+        copy_file(src, get_parent_path(dst))
 
 
 # Add this file / dir from 'input' to 'output'
@@ -72,6 +67,14 @@ def get_relative_path(path):
     for i in range(_from + 1, len(parts)):
         rela = os.path.join(rela, parts[i])
     return rela
+
+
+# Get parent path
+def get_parent_path(path: str):
+    if path.endswith(os.sep):
+        path = path[:-1]
+
+    return os.path.dirname(path)
 
 
 # Get pack list
