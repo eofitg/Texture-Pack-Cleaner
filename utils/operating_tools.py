@@ -35,7 +35,7 @@ def copy_dir(src, dst):
 # Copy this file / dir to dst path
 def copy(src, dst):
     s = str(src)
-    if s.endswith('/'):
+    if s.endswith(os.sep):
         s = src[:-1]
 
     name = os.path.basename(s)
