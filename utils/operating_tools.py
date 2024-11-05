@@ -45,7 +45,7 @@ def copy(src, dst):
         copy_file(src, dst[:-len(name)])
 
 
-# Add this file/folder from 'input' to 'output'
+# Add this file / dir from 'input' to 'output'
 def build(src):
     copy(src, get_output_path(src))
 
