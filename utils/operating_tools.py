@@ -74,7 +74,7 @@ def get_relative_path(path):
     return rela
 
 
-# Get pack lists
+# Get pack list
 def get_packs():
     path = input_path
     dirs = []
