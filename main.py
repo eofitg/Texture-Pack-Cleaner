@@ -296,8 +296,8 @@ def main():
             print("Compressed output files.")
 
         # Delete previously decompressed dirs in the "input" folder
-        ot.del_dir(ot.get_output_path(pack_path))
-        ot.del_dir(pack_path_backup)
+        ot.delete_dir(ot.get_output_path(pack_path))
+        ot.delete_dir(pack_path_backup)
         if building_message or necessary_message:
             print("Cleared extra files.")
 

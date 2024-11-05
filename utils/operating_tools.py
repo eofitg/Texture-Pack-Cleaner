@@ -14,11 +14,11 @@ def clear():
         os.makedirs(output_path)
         return
     if len(os.listdir(output_path)) != 0:
-        del_dir(output_path)
+        delete_dir(output_path)
         os.makedirs(output_path)
 
 
-def del_dir(dst):
+def delete_dir(dst):
     if os.path.exists(dst):
         shutil.rmtree(dst)
 
