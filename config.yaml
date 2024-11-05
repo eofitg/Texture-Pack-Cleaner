@@ -10,7 +10,7 @@ version: '1.8.9'
 
 
 # special filter rules
-# priority: keep_info > keep_hidden > blacklist > whitelist
+# priority: blacklist > keep_hidden > keep_info > whitelist
 
 # if or not to keep pack author's credits or signs or something like these
 # = files are siblings with './assets' folder but not necessary

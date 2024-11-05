@@ -51,6 +51,13 @@ def build(path, keep):
 
     name = os.path.basename(path)  # with ext
 
+    # priority: blacklist > keep_hidden > whitelist
+    if name in blacklist:
+        if building_message:
+            print("  Found blacklist item at \"" + path + "\"")
+            print("    Cleared.")
+        return
+
     # hidden items check
     if name.startswith('.'):
         if building_message:
@@ -62,13 +69,6 @@ def build(path, keep):
         else:
             if building_message:
                 print("    Cleared as keep_hidden=" + str(keep_hidden))
-        return
-
-    # priority: blacklist > whitelist
-    if name in blacklist:
-        if building_message:
-            print("  Found blacklist item at \"" + path + "\"")
-            print("    Cleared.")
         return
 
     relative_path = ot.get_relative_path(path)
@@ -261,6 +261,13 @@ def main():
 
             # assets dir has to be kept
             if item.is_dir() and item.name == "assets":
+                continue
+
+            # priority: blacklist > keep_hidden > keep_info > whitelist
+            if item.name in blacklist:
+                if building_message:
+                    print("  Found blacklist item at \"" + item.path + "\"")
+                    print("    Cleared.")
                 continue
 
             # check hidden items
