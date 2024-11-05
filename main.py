@@ -14,8 +14,10 @@ whitelist = cr.get_path_list('whitelist')  # string list
 blacklist = cr.get_path_list('blacklist')  # string list
 
 
-# this path only has one dir
-def only1dir(path):
+# if or not this path only has one dir
+# True -> return the path of this dir
+# False -> return ""
+def nest_check(path):
     count = False
     res_path = ""
 
@@ -250,8 +252,8 @@ def main():
         # ./input/XXX/{pack}
         # for this, recognize dirs with only 1 internal dir as a layer of nesting
         # (Not the best way, I know. BUT I AM TOO LAZY TO FIND A BETTER METHOD :///)
-        if only1dir(pack_path) != "":
-            pack_path = only1dir(pack_path)
+        if nest_check(pack_path) != "":
+            pack_path = nest_check(pack_path)
             if building_message or necessary_message:
                 print("Building nested dir \"" + pack_path + "\" ......")
 
