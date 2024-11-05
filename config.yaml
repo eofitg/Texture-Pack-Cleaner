@@ -34,4 +34,6 @@ whitelist:
   - 'assets/minecraft/optifine'
   # game sounds (which are not in the default game resource path)
   - 'assets/minecraft/sounds'
+  # font (always different...)
+  - 'assets/minecraft/font'
 
