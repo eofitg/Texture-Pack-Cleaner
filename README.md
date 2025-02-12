@@ -27,7 +27,7 @@ Remove files that are the same as **original** or **meaningless** in a custom te
 - `main.py`: `build()` _line 82_
   - Static images with `.mcmeta` files will be also recognized as dynamic images
 - `main.py`: `build()` _line 208_
-  - For nested empty folders, only the deepest level will be removed.
+  - For nested empty folders, only the deepest level will be cleared.
 ---
 ### Fun Facts
 - POV: You disabled all the OptiFine features:
